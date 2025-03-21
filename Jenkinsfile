@@ -37,7 +37,7 @@ pipeline {
     }
   }
   tools {
-    maven ${params.MAVEN}
+    maven "${params.MAVEN}"
   }
 
 }
