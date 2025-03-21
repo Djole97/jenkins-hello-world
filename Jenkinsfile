@@ -1,6 +1,13 @@
 pipeline {
   agent any
   stages {
+    stage('Maven Version') {
+      steps {
+        sh 'echo Print Maven Version'
+        sh 'mvn -version'
+      }
+    }
+
     stage('Build') {
       steps {
         sh 'mvn clean package -DskipTests=true'
@@ -15,26 +22,20 @@ pipeline {
       }
     }
     
-    stage('Containerization') {
+    stage('Local Deployment') {
       steps {
-        sh 'echo Docker Build Image..'
-        sh 'echo Docker Tag Image....'
-        sh 'echo Docker Push Image......'
-      }
-    }
-
-    stage('Kubernetes Deployment') {
-      steps {
-        sh 'echo Deploy to Kubernetes using ArgoCD'
+        sh """ java -jar target/hello-demo-*.jar > /dev/null & """
       }
     }
     
     stage('Integration Testing') {
       steps {
-        sh "sleep 10s"
-        sh 'echo Testing using cURL commands......'
+        sh 'sleep 5s'
+        sh 'curl -s http://localhost:6767/hello'
       }
     }
+
+
   }
   tools {
     maven 'M398'
